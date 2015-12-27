@@ -44,7 +44,7 @@ function initMap() {
             lat: userCoords.latitude,
             lng: userCoords.longitude
         },
-        zoom: 13
+        zoom: 14
     };
 
     var map = new google.maps.Map(document.getElementById('map'), mapOptions);
