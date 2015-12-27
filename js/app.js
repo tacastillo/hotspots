@@ -18,18 +18,18 @@ function detectBrowser() {
 function initMap() {
     // detectBrowser();
 
-	$(document).ready(function() {
-		if (document.URL.indexOf("#access_token=") < 0) {
-			$('#sign-in').text("Sign In Via Foursquare");
-		} else {
-			$('#sign-in').text("Authorization Accepted");
-			var access_token = document.URL.substring(document.URL.indexOf("=")+1);
+	// $(document).ready(function() {
+	// 	if (document.URL.indexOf("#access_token=") < 0) {
+	// 		$('#sign-in').text("Sign In Via Foursquare");
+	// 	} else {
+	// 		$('#sign-in').text("Authorization Accepted");
+	// 		var access_token = document.URL.substring(document.URL.indexOf("=")+1);
 			Foursquare.init({
-				access_token: access_token,
+				// access_token: access_token,
 				coords: userCoords
 			});
-		}
-	});
+	// 	}
+	// });
 
     var mapOptions = {
         mapTypeControl: true,
@@ -73,7 +73,7 @@ function initMap() {
 			lng = venue.location.lng;
 			users = venue.stats.usersCount;
 			weightedUsers = users/average;
-			console.log("Average for " + venue.name + " is: " + weightedUsers);
+			// console.log("Average for " + venue.name + " is: " + weightedUsers);
 			if (lat && lng) {
 				heatMapData.push({location: new google.maps.LatLng(lat, lng), weight: weightedUsers});
 			}
@@ -93,8 +93,6 @@ function initMap() {
     	heatMapData.length = 0;
 	    Foursquare.explore(updateHeatmap);
 	});
-
-    /* new google.maps.LatLng(37.782, -122.447) */
 }
 
 function init() {
