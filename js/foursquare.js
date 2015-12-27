@@ -34,7 +34,6 @@ window.Foursquare = {
 	},
 
 	getJSON: function(url, callback){
-		console.log(url);
 		$.ajax({
 			type: "GET",
 			url: url,

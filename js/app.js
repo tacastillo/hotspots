@@ -24,6 +24,7 @@ function initMap() {
 	// 	} else {
 	// 		$('#sign-in').text("Authorization Accepted");
 	// 		var access_token = document.URL.substring(document.URL.indexOf("=")+1);
+			// console.log(userCoords);
 			Foursquare.init({
 				// access_token: access_token,
 				coords: userCoords
