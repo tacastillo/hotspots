@@ -101,7 +101,7 @@ function init() {
 			initMap();
 		}
 		function success(pos) {
-			// userCoords = pos.coords;
+			userCoords = pos.coords;
 			initMap();
 		}
 		navigator.geolocation.getCurrentPosition(success, error);
