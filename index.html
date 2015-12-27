@@ -1,8 +1,38 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-</head>
-<body>
-<h1>Hello!</h1>
-</body>
+    <head>
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="tacastillo.github.io/hotspots" />
+        <meta property="og:title" content="IT'S LIT - Find Where It's LIT!" />
+        <meta property="og:site_title" content="Find Popular Areas in Your Neighborhood" />
+        <meta property="og:description" content="Discover new and exciting places because this map is LIT!!! (with data points from the Foursquare API)" />
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+        <link rel="stylesheet" href="css/style.css">
+
+        <!-- Javascript -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+
+        <script type="application/javascript" src="js/foursquare.js"></script>
+        <script type="application/javascript" src="js/app.js"></script>
+
+        <meta charset="utf-8">
+        <title>IT'S LIT</title>
+    </head>
+    <body>
+    	<div id="menu">
+			<!-- <a href="https://foursquare.com/oauth2/authenticate?client_id=DNKYBONOXMOGCBLFTLQ253CUROP3WCHGOASHRPWCPS5NMPEI&response_type=token&redirect_uri=http://127.0.0.1:8080/" id="sign-in">  -->
+			<a href="https://foursquare.com/oauth2/authenticate?client_id=DNKYBONOXMOGCBLFTLQ253CUROP3WCHGOASHRPWCPS5NMPEI&response_type=token&redirect_uri=http://tacastillo.github.io/hotspots/" id="sign-in">
+			</a>
+			<div id="results"></div>
+    	</div>
+    	<div id="map"></div>
+		<script type="text/javascript"
+	  		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVCVWv1IBf4VSwNreBHtdu24c3uECZ6ak&libraries=visualization&callback=init" async defer>
+		</script>
+    </body>
 </html>
