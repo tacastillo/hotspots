@@ -4,6 +4,22 @@ html, body {
     padding: 0;
 }
 
+.in-menu {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+#khaled {
+	height: 100%;
+}
+
+#khaleds-box {
+	padding: 0;
+}
+
 #menu {
 	height: 20%;
+	margin: 0;
+	padding: 0;
 }
