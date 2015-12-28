@@ -1,22 +1,46 @@
-var $map = $('#map');
 var userCoords = { latitude: 37.77460802950839, longitude: -122.44795115356442}
 var heatMapData = [];
+var map, heatmap;
+var marker;
+var infoWindow = null;
+
+var zoomToMeters = {};
+
 
 function detectBrowser() {
 	var useragent = navigator.userAgent;
-	var mapdiv = document.getElementById("map");
+	// var mapdiv = $("#map").get(0);
+	var $map = $('#map');
 
 	if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1 ) {
- 		mapdiv.style.width = '100%';
-		mapdiv.style.height = '100%';
+		$map.width("100%");
+    	$map.height("100%");
 	} else {
-		mapdiv.style.width = '100%';
-    	mapdiv.style.height = '80%';
+    	$map.width("100%");
+    	$map.height("80%");
   	}
 }
 
+function init() {
+	if (navigator.geolocation) {
+		function error(err) { console.warn('ERROR(' + err.code + '): ' + err.message); 
+			initMap();
+		}
+		function success(pos) {
+			userCoords = pos.coords;
+			initMap();
+		}
+		navigator.geolocation.getCurrentPosition(success, error);
+	} else {
+		alert('Geolocation is not supported in your browser');
+		initMap();
+	}
+}
+
 function initMap() {
-    // detectBrowser();
+    detectBrowser();
+
+    var isDoubleClick = null;
 
 	// $(document).ready(function() {
 	// 	if (document.URL.indexOf("#access_token=") < 0) {
@@ -48,12 +72,27 @@ function initMap() {
         zoom: 14
     };
 
-    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-    var heatmap = new google.maps.visualization.HeatmapLayer({
-		radius: 25
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+    marker = new google.maps.Marker({
+    	map: map,
+    });
+
+    infoWindow = new google.maps.InfoWindow({
+		content: "Placeholder",
+		maxWidth: 300
+	});
+
+    heatmap = new google.maps.visualization.HeatmapLayer({
+		radius: 40
 	});
 
     function updateHeatmap(results) {
+   		if (results.meta.errorType) {
+    			alert("Oh no! something bad happened when running explore()");
+    			return;
+		}
+
 		var response = results.response;
 		var root_url = "http://www.foursquare.com/v/";
 		var locations = response.groups[0].items;
@@ -74,7 +113,6 @@ function initMap() {
 			lng = venue.location.lng;
 			users = venue.stats.usersCount;
 			weightedUsers = users/average;
-			// console.log("Average for " + venue.name + " is: " + weightedUsers);
 			if (lat && lng) {
 				heatMapData.push({location: new google.maps.LatLng(lat, lng), weight: weightedUsers});
 			}
@@ -82,32 +120,71 @@ function initMap() {
 
 		heatmap.setData(heatMapData);
 		heatmap.setMap(map);
-    };
+    }
 
-    Foursquare.explore(updateHeatmap);
+    function closeInfoWindow() {
+		marker.setVisible(false);
+    }
+
+    function openInfoWindow(latLng, map) {
+    	var coords = {latitude: latLng.lat(), longitude: latLng.lng()};
+    	var content = "";
+
+    	Foursquare.explore(function(results) {
+    		if (results.meta.errorType) {
+    			alert("Oh no! something bad happened when running explore()");
+    			return;
+    		}
+
+			var response = results.response;
+			var root_url = "http://www.foursquare.com/v/";
+			var locations = response.groups[0].items;
+			var venue;
+
+			content += "<ul>";
+			locations.forEach(function(place) {
+				venue = place.venue;
+				console.log("enters: " + venue.name);
+				users = venue.stats.usersCount;
+				content += "<li>"
+					+ venue.name
+					+ "</li>"
+			});
+
+			if (content.indexOf("<li>") < 0) {
+				content += "<li>It's not very lit here.</li>";
+			}
+
+			content += "</ul>";
+
+			infoWindow.setContent(content);
+			marker.setPosition(latLng);
+			marker.setVisible(true);
+			infoWindow.open(map, marker);
+    	}, coords, 5, 100);
+    }
 
     map.addListener('dragend', function() {
     	var center = map.getCenter();
     	Foursquare.updateCoords({latitude: center.lat(), longitude: center.lng()});
-
-    	heatmap.setMap(null);
     	heatMapData.length = 0;
+
 	    Foursquare.explore(updateHeatmap);
 	});
-}
 
-function init() {
-	if (navigator.geolocation) {
-		function error(err) { console.warn('ERROR(' + err.code + '): ' + err.message); 
-			initMap();
-		}
-		function success(pos) {
-			userCoords = pos.coords;
-			initMap();
-		}
-		navigator.geolocation.getCurrentPosition(success, error);
-	} else {
-		alert('Geolocation is not supported in your browser');
-		initMap();
-	}
+	map.addListener('click', function(e) {
+		isDoubleClick = setTimeout(function() {
+			openInfoWindow(e.latLng, map);
+		}, 200);
+	});
+
+	map.addListener('dblclick', function() {
+		clearTimeout(isDoubleClick);
+	});
+
+	infoWindow.addListener('closeclick', function() {
+		marker.setVisible(false);
+	});
+
+	Foursquare.explore(updateHeatmap);
 }
