@@ -20,14 +20,18 @@ window.Foursquare = {
 		this.config.coords = coords;
 	},
 
-	explore: function(callback, coords, maxResults, maxDistance) {
+	explore: function(callback, userOptions) {
 		/* ENDPOINT: https://api.foursquare.com/v2/venues/explore?...=... */
-		var coords = coords || this.config.coords;
-		var limit = maxResults ? "&limit=" + maxResults : "";
-		var radius = maxDistance ? "&radius=" + maxDistance : "";
+		var options = userOptions || {};
+		var searchArea = options.coords || this.config.coords;
+		var limit = options.maxResults ? "&limit=" + options.maxResults : "";
+		var radius = options.maxDistance ? "&radius=" + options.maxDistance : "";
+
+		console.log("coords: " + searchArea);
+		console.log("Radius: " + radius);
 
 		var endpoint = this.BASE_URL + 'venues/explore?ll=' 
-			+ coords.latitude +',' + coords.longitude 
+			+ searchArea.latitude +',' + searchArea.longitude 
 			// + '&oauth_token=' + this.config.access_token
 			+ limit + radius
 			+ '&client_id=' + this.ID

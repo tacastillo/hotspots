@@ -3,8 +3,19 @@ var heatMapData = [];
 var map, heatmap;
 var marker;
 var infoWindow = null;
+var range;
 
-var zoomToMeters = {};
+var zoomToMeters = {
+	'19m': 30,
+	'18m': 60,
+	'17m': 140,
+	'16m': 300,
+	'15m': 700,
+	'14m': 1500,
+	'13m': 3000,
+	'12m': 6000,
+	'11m': 12000,
+};
 
 
 function detectBrowser() {
@@ -38,23 +49,13 @@ function init() {
 }
 
 function initMap() {
-    detectBrowser();
-
     var isDoubleClick = null;
 
-	// $(document).ready(function() {
-	// 	if (document.URL.indexOf("#access_token=") < 0) {
-	// 		$('#sign-in').text("Sign In Via Foursquare");
-	// 	} else {
-	// 		$('#sign-in').text("Authorization Accepted");
-	// 		var access_token = document.URL.substring(document.URL.indexOf("=")+1);
-			// console.log(userCoords);
-			Foursquare.init({
-				// access_token: access_token,
-				coords: userCoords
-			});
-	// 	}
-	// });
+	Foursquare.init({
+		coords: userCoords
+	});
+
+    detectBrowser();
 
     var mapOptions = {
         mapTypeControl: true,
@@ -69,7 +70,7 @@ function initMap() {
             lat: userCoords.latitude,
             lng: userCoords.longitude
         },
-        zoom: 14
+        zoom: 15
     };
 
     map = new google.maps.Map(document.getElementById('map'), mapOptions);
@@ -130,6 +131,12 @@ function initMap() {
     	var coords = {latitude: latLng.lat(), longitude: latLng.lng()};
     	var content = "";
 
+    	var options = {
+    		coords: coords, 
+    		maxResults: 5, 
+    		maxDistance: 100
+    	}
+
     	Foursquare.explore(function(results) {
     		if (results.meta.errorType) {
     			alert("Oh no! something bad happened when running explore()");
@@ -144,10 +151,12 @@ function initMap() {
 			content += "<ul>";
 			locations.forEach(function(place) {
 				venue = place.venue;
-				console.log("enters: " + venue.name);
 				users = venue.stats.usersCount;
-				content += "<li>"
+				content += "<li><div><h6>"
 					+ venue.name
+					+ "</h4><i>"
+					+ (venue.rating !== undefined ? venue.rating : "No Rating Provided")
+					+ "</i></div>"
 					+ "</li>"
 			});
 
@@ -161,7 +170,7 @@ function initMap() {
 			marker.setPosition(latLng);
 			marker.setVisible(true);
 			infoWindow.open(map, marker);
-    	}, coords, 5, 100);
+    	}, options);
     }
 
     map.addListener('dragend', function() {
@@ -169,7 +178,7 @@ function initMap() {
     	Foursquare.updateCoords({latitude: center.lat(), longitude: center.lng()});
     	heatMapData.length = 0;
 
-	    Foursquare.explore(updateHeatmap);
+	    Foursquare.explore(updateHeatmap, {maxDistance: range});
 	});
 
 	map.addListener('click', function(e) {
@@ -186,5 +195,6 @@ function initMap() {
 		marker.setVisible(false);
 	});
 
+	// range = zoomToMeters[oldZoom + 'm'] || 24000;
 	Foursquare.explore(updateHeatmap);
 }
