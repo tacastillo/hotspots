@@ -4,6 +4,7 @@ var map, heatmap;
 var marker;
 var infoWindow = null;
 var range;
+var search;
 
 var zoomToMeters = {
 	'19m': 30,
@@ -73,7 +74,7 @@ function initMap() {
         zoom: 15
     };
 
-    map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    map = new google.maps.Map($('#map').get(0), mapOptions);
 
     marker = new google.maps.Marker({
     	map: map,
@@ -87,41 +88,16 @@ function initMap() {
     heatmap = new google.maps.visualization.HeatmapLayer({
 		radius: 40
 	});
-
-    function updateHeatmap(results) {
-   		if (results.meta.errorType) {
-    			alert("Oh no! something bad happened when running explore()");
-    			return;
-		}
-
-		var response = results.response;
-		var root_url = "http://www.foursquare.com/v/";
-		var locations = response.groups[0].items;
-		var venue, lat, lng;
-		var average, sum = 0, count = 0;
-		var users, weightedUsers;
-
-		locations.forEach(function(place) {
-			count++;
-			// return total + place.venue.stats.usersCount;
-			sum += place.venue.stats.usersCount;
-		});
-		average = sum/count;
-
-		locations.forEach(function(place) {
-			venue = place.venue;
-			lat = venue.location.lat;
-			lng = venue.location.lng;
-			users = venue.stats.usersCount;
-			weightedUsers = users/average;
-			if (lat && lng) {
-				heatMapData.push({location: new google.maps.LatLng(lat, lng), weight: weightedUsers});
-			}
-		});
-
-		heatmap.setData(heatMapData);
-		heatmap.setMap(map);
-    }
+    // <input id="search" class="interface" type="text" placeholder="Enter a Location...">
+    var search = $('<input>', {
+    	"class": "interface",
+    	"id": "search",
+    	"type": "text",
+    	"placeholder": "Enter a Location..."
+    }).get(0);
+    map.controls[google.maps.ControlPosition.TOP_RIGHT].push(search);
+    var autocomplete = new google.maps.places.Autocomplete(search);
+    autocomplete.bindTo('bounds', map);
 
     function closeInfoWindow() {
 		marker.setVisible(false);
@@ -194,6 +170,65 @@ function initMap() {
 	infoWindow.addListener('closeclick', function() {
 		marker.setVisible(false);
 	});
+
+	autocomplete.addListener('place_changed', function() {
+	    var place = autocomplete.getPlace();
+	    var distance;
+	    if (!place.geometry) {
+	      return;
+	    }
+
+	    if (place.geometry.viewport) {
+	      map.fitBounds(place.geometry.viewport);
+	    } else {
+	      map.setCenter(place.geometry.location);
+	      map.setZoom(17);
+	      distance = 150;
+	    }
+
+	    var center = map.getCenter();
+    	Foursquare.updateCoords({latitude: center.lat(), longitude: center.lng()});
+    	heatMapData.length = 0;
+
+	    Foursquare.explore(updateHeatmap, {maxDistance: distance});
+	});
+
+
+	function updateHeatmap(results) {
+   		if (results.meta.errorType) {
+    			alert("Oh no! something bad happened when running explore()");
+    			return;
+		}
+
+		var response = results.response;
+		var root_url = "http://www.foursquare.com/v/";
+		var locations = response.groups[0].items;
+		var venue, lat, lng;
+		var average, sum = 0, count = 0;
+		var users, weightedUsers;
+
+		locations.forEach(function(place) {
+			count++;
+			// return total + place.venue.stats.usersCount;
+			sum += place.venue.stats.usersCount;
+		});
+		average = sum/count;
+
+		locations.forEach(function(place) {
+			venue = place.venue;
+			lat = venue.location.lat;
+			lng = venue.location.lng;
+			users = venue.stats.usersCount;
+			weightedUsers = users/average;
+			if (lat && lng) {
+				heatMapData.push({location: new google.maps.LatLng(lat, lng), weight: weightedUsers});
+			}
+		});
+
+		heatmap.setData(heatMapData);
+		heatmap.setMap(map);
+    }
+
 
 	// range = zoomToMeters[oldZoom + 'm'] || 24000;
 	Foursquare.explore(updateHeatmap);

@@ -9,13 +9,11 @@
         <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 
         <!-- CSS -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
         <link rel="stylesheet" href="css/style.css">
 
         <!-- Javascript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
 
         <script type="application/javascript" src="js/foursquare.js"></script>
         <script type="application/javascript" src="js/app.js"></script>
@@ -24,18 +22,20 @@
         <title>Where's It Lit? - Find Popular Areas in Your Neighborhood</title>
     </head>
     <body>
-    	<div id="menu" class="row">
-            <div class="col s4 in-menu" id="khaleds-box">
+    	<div id="menu" class="">
+            <div class="in-menu" id="khaleds-box">
                 <img class="in-menu" src="assets/djkhaled.png"/>
             </div>
-            <div class="in-menu col s8">
+            <div class="in-menu">
                 <h2>Where's It Lit?</h1>
                 <p>Click around and drag the map to find places where it's LIT</p>
             </div>
     	</div>
+
     	<div id="map"></div>
+
 		<script type="text/javascript"
-	  		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVCVWv1IBf4VSwNreBHtdu24c3uECZ6ak&libraries=visualization&callback=init" async defer>
+	  		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVCVWv1IBf4VSwNreBHtdu24c3uECZ6ak&libraries=visualization,places&callback=init" async defer>
 		</script>
     </body>
 </html>

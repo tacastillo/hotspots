@@ -27,12 +27,8 @@ window.Foursquare = {
 		var limit = options.maxResults ? "&limit=" + options.maxResults : "";
 		var radius = options.maxDistance ? "&radius=" + options.maxDistance : "";
 
-		console.log("coords: " + searchArea);
-		console.log("Radius: " + radius);
-
 		var endpoint = this.BASE_URL + 'venues/explore?ll=' 
 			+ searchArea.latitude +',' + searchArea.longitude 
-			// + '&oauth_token=' + this.config.access_token
 			+ limit + radius
 			+ '&client_id=' + this.ID
 			+ '&client_secret=' + this.SECRET
