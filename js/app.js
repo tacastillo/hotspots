@@ -93,7 +93,7 @@ function initMap() {
     	"class": "interface",
     	"id": "search",
     	"type": "text",
-    	"placeholder": "Enter a Location..."
+    	"placeholder": "Enter a Location"
     }).get(0);
     map.controls[google.maps.ControlPosition.TOP_RIGHT].push(search);
     var autocomplete = new google.maps.places.Autocomplete(search);
@@ -124,13 +124,13 @@ function initMap() {
 			var locations = response.groups[0].items;
 			var venue;
 
-			content += "<ul>";
+			content += "<ul class='no-bullet' style='list-style-type: none;'>";
 			locations.forEach(function(place) {
 				venue = place.venue;
 				users = venue.stats.usersCount;
-				content += "<li><div><h6>"
+				content += "<li><div><h3>"
 					+ venue.name
-					+ "</h4><i>"
+					+ "</h3><i>"
 					+ (venue.rating !== undefined ? venue.rating : "No Rating Provided")
 					+ "</i></div>"
 					+ "</li>"

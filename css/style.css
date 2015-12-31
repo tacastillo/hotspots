@@ -21,6 +21,11 @@ html, body {
     padding: 0;
 }
 
+.no-bullet {
+	list-style-type: none;
+	padding-left: 0;
+}
+
 #khaled {
     height: 100%;
 }
