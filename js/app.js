@@ -160,7 +160,7 @@ function initMap() {
 	map.addListener('click', function(e) {
 		isDoubleClick = setTimeout(function() {
 			openInfoWindow(e.latLng, map);
-		}, 200);
+		}, 300);
 	});
 
 	map.addListener('dblclick', function() {
